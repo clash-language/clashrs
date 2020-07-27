@@ -1,4 +1,4 @@
-/// libenv/lib.rs
+/// libenv/env.rs
 /// This module is responsible for bringing the names
 /// and paths of all shell-executable programs into
 /// the static global namespace.
@@ -18,5 +18,4 @@
 /// to those utilities in a nested directory of the project; or even 
 /// a need to duplicate and minify the external binary when compiling 
 /// a production build.
-mod libenv;
-
+struct Env {}

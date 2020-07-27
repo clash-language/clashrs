@@ -1,11 +1,10 @@
-use crate::libcore;
-use crate::libdomain;
-use crate::libenv;
-use crate::liberror;
-use crate::liblex;
-use crate::libscope;
-use crate::libstd;
-use crate::libsystem;
-use crate::test;
-
+pub mod libcore;
+pub mod libdomain;
+pub mod libenv;
+pub mod liberror;
+pub mod liblex;
+pub mod libscope;
+pub mod libstd;
+pub mod libsystem;
+pub mod claspc;
 
