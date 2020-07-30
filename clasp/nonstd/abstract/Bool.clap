@@ -1,4 +1,97 @@
-# clasp/nonstd/Bool.clap
-# TL;DR: 
-# Description: 
-# Exports: (...)
+"""clasp/nonstd/Bool.clap
+ TL;DR: Very meta. Such wow.
+ Description: Characterizes the fundamental axioms:
+	- True == True, 
+	- False == False, 
+	- ~(True) == False 
+ (with type casting, of course)
+ Exports: (...)
+"""
+
+type Bool(Enum) {
+	True,
+	False,
+	Fuzzy,
+	FuzzyOrFalse,
+	FuzzyOrTrue
+}
+
+static true  = Bool::True;
+static false = Bool::False;
+static fuzzy = Bool::Fuzzy;
+
+type LogicalError(Error) {
+	pub fn __raise__(self, msg) -> LogicalError {
+		LogicalError.new(msg)
+	}
+}
+
+impl Bool {
+	nonlocal true;
+	nonlocal false;
+	nonlocal fuzzy;
+
+	fn __and__(self, boolean) -> Bool {
+		match(self.__value__) => {
+			true => {
+				match(boolean) => {
+					true  => return true,
+					false => return false,
+					fuzzy => return fuzzy
+				}
+			},
+			false => {
+				match(boolean) => {
+					true  => return false,
+					false => return false,
+					fuzzy => return false
+				}
+			},
+			fuzzy => {
+				match(boolean) => {
+					true => return fuzzy,
+					false => return false,
+					fuzzy => return Bool::FuzzyOrFalse
+				}
+			},
+			_ => raise(LogicalError("FuzzyFalse logic not implemented"));
+		}		
+	}
+	
+	fn __or__(self, boolean) -> Bool {
+		match(self.__value__) => {
+			true => {
+				match(boolean) => {
+					true  => return true,
+					false => return true,
+					fuzzy => return true
+				}
+			},
+			false => {
+				match(boolean) => {
+					true  => return true,
+					false => return false,
+					fuzzy => return fuzzy
+				}
+			},
+			fuzzy => {
+				match(boolean) => {
+					true => return true,
+					false => return fuzzy,
+					fuzzy => return Bool::FuzzyOrTrue
+				}
+			},
+			_ => raise(LogicalError("Fuzzy state logic not implemented"));
+		}
+	}
+
+	fn __not__(self) -> Bool {
+		match(self.__value__) -> Bool {
+			true  => false,
+			false => true,
+			fuzzy => fuzzy,
+			_ => raise(LogicalError("Fuzzy state logic not implemented."))
+		}
+	}
+}
+
