@@ -61,14 +61,12 @@ public_function = {
       ~ scope
     ~ "}" 
 }
-
 verb = {
-    "-"  | "%" | ">" | "+"  | 
-    "*" | "<"  | "^" | "|"  | ">" 
+    "-"  | "%" | ">"
+  | "+"  | "*" | "<"  | "^" | "|"
+  | ">" 
 }
-
 annotation_type_assignment = @{ ASCII_ALPHA+ }
-
 annotation_type_return = @{ ASCII_ALPHA+ }
 
 integer = @{ "_"? ~ ASCII_DIGIT+ }
@@ -90,4 +88,50 @@ False = { "false" }
 boolean = { True | False }
 
 value = @{ string | integer | decimal | boolean }
+
+class = {
+    "class"
+    ~ class_name
+    ~ ("(" ~ parameters ~ ")")*
+    ~ "{"
+    ~ (NEWLINE*)?
+    ~ class_scope?
+    ~ (NEWLINE*)?
+    ~ "}"
+}
+
+class_name = { ASCII_ALPHA+ }
+
+parameter  = { (name ~ "=" ~ param_value) | name }
+
+name       = { ASCII_ALPHA+ }
+
+param_value= { ASCII_ALPHA+ }
+
+parameters  = { parameter+ }
+
+class_scope = {
+    (
+    function
+     | implementation
+     | attribute)*
+}
+
+implementation = {
+    "impl " ~ impl_type ~ "{" ~ NEWLINE* 
+    ~ (
+        public_function
+    )*
+    ~ "}"
+}
+LOWERCASE = { ASCII_ALPHA_LOWER }
+impl_type = @{ ( 'A'..'Z' ~ LOWERCASE+ )? }
+attr_type = @{ ( 'A'..'Z' ~ LOWERCASE+ )? }
+attribute = @{
+    "attr " ~ attr_type ~ "{"
+    ~ (
+        expr*
+    )?
+    ~ "}"
+}
 
