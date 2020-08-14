@@ -1,0 +1,93 @@
+program = _{ SOI ~ "\n"* ~ (stmt ~ "\n"+) * ~ stmt? ~ EOI }
+
+stmt = _{ expr }
+
+expr = {
+	assgmtExpr
+    | monadicExpr
+    | dyadicExpr
+    | string
+    | terms
+    | function
+}
+
+monadicExpr = { verb ~ expr }
+
+dyadicExpr = { (monadicExpr | terms) ~ verb ~ expr }
+
+assgmtExpr = { ident ~ (" = " | "=" ) ~ expr }
+
+terms = { term+ }
+
+term = _{ decimal | integer | ident | function }
+
+function = { public_function | private_function }
+
+function_name = { ident }
+
+arguments = { "(" ~ argument_entries ~ ")" }
+
+argument_name = { ASCII_ALPHA+ }
+
+default_value = { value }
+
+scope = { (stmt ~ "\n"+)+ }
+
+argument_entry = {
+	argument_name 
+    ~ (":" ~ annotation_type_assignment)? 
+    ~ ("=" ~ default_value)?
+}
+
+argument_entries = {
+    (
+    	argument_entry ~ "," ~ argument_entries 
+    )
+    | argument_entry?
+}
+private_function = { 
+    "fn " ~ function_name
+          ~ arguments 
+          ~  (("-> "|"->") ~ annotation_type_return)? ~ "{" 
+      ~ NEWLINE*
+      ~ scope
+    ~ "}" 
+}
+public_function = { 
+    "pub fn " ~ function_name
+          ~ arguments 
+          ~ (("-> "|"->") ~ annotation_type_return)? ~ "{" 
+      ~ NEWLINE*
+      ~ scope
+    ~ "}" 
+}
+
+verb = {
+    "-"  | "%" | ">" | "+"  | 
+    "*" | "<"  | "^" | "|"  | ">" 
+}
+
+annotation_type_assignment = @{ ASCII_ALPHA+ }
+
+annotation_type_return = @{ ASCII_ALPHA+ }
+
+integer = @{ "_"? ~ ASCII_DIGIT+ }
+
+decimal = @{ "_"? ~ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT* }
+
+ident = @{ ASCII_ALPHA ~ (ASCII_ALPHANUMERIC | "_")* }
+
+string = @{ "'" ~ ( "''" | (!"'" ~ ANY) )* ~ "'" }
+
+WHITESPACE = _{ " " | "\t" }
+
+NEWLINE = _{ "\r" | "\r\n" | "\n" }
+
+True = { "true" }
+
+False = { "false" } 
+
+boolean = { True | False }
+
+value = @{ string | integer | decimal | boolean }
+
