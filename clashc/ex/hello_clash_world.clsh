@@ -1,0 +1,4 @@
+#!/bin/clash
+pub fn main() {
+    print("Hello Clash World!)
+}
